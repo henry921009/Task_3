@@ -1,0 +1,47 @@
+export PYTORCH_ENABLE_MPS_FALLBACK=1
+fuseki-server --mem /ds &
+jobs
+
+1. 確認埠號被佔用的原因
+
+檢查埠號佔用情況
+
+打開終端機，執行以下命令：
+lsof -i :3030
+結果分析：
+    1.	如果輸出類似以下內容：
+    java    12345 username   45u  IPv4  0x0abcdef  0t0  TCP *:3030 (LISTEN)
+    表示 PID 為 12345 的程序正在使用 3030 埠。
+
+    2.	如果結果為空，表示 3030 埠沒有被其他程序佔用，可以直接重新啟動 Fuseki。
+
+2. 關閉佔用該埠的程序
+
+    1. 使用以下命令強制終止佔用該埠的程序：
+    kill -9 12345
+    其中，12345 是第一步查到的 PID。
+
+    2. 再次檢查是否釋放該埠：
+    lsof -i :3030
+    若輸出為空，表示埠號已釋放。
+
+3. 確保舊的 Fuseki 完全停止
+
+執行以下命令檢查 Fuseki 是否仍然運行：
+ps aux | grep fuseki
+然後關閉相關進程：
+kill -9 <PID>
+
+4. 更換埠號（可選，避免未來衝突）
+
+如果不希望使用 3030 埠，可以在啟動 Fuseki 時更換埠號。例如，使用 4040 埠：
+fuseki-server --port=4040 --mem /ds
+之後程式連線設定需要調整：
+FUSEKI_DATASET_URL = "http://localhost:4040/ds"
+FUSEKI_QUERY_ENDPOINT = "http://localhost:4040/ds/sparql"
+FUSEKI_UPDATE_ENDPOINT = "http://localhost:4040/ds/update"
+
+5. 重啟 Fuseki
+
+執行以下命令重新啟動 Fuseki：
+fuseki-server --mem /ds

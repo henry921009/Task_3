@@ -1,0 +1,4 @@
+Question,Method,Execution Time (s),Error Rate (%)
+When did the CEO of Apple born?,Subgraph,7.7209,"The CEO of Apple, Tim Cook, was born on November 1, 1960.
+"
+Who is the president of the United States?,Subgraph,3.6843,No information found in the subgraph.
